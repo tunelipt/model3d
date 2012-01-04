@@ -111,7 +111,8 @@ meshMeanNormal <- function(m){
   nn <- meshNormal(m)
   aa <- meshArea(m)
   A <- rbind(aa, aa, aa)
-  return(rowSums(nn*A) / sum(aa))
+  nm <- rowSums(nn*A) / sum(aa)
+  return(nm / sqrt(sum(nm*nm)))
 }
 
 
@@ -132,3 +133,14 @@ meshGet.pmesh <- function(m,i) m[[i]]
 meshGet.mesh3d <- function(m,i) {p <- m[,,i]; class(p) <- 'polygon3d'; return(p)}
 meshGet.pmesh3d <- function(m,i) m[[i]]
 
+
+
+
+joinPolygons <- function(plst){
+
+  p <- list()
+  for (pp in plst)
+    p <- c(p, pp)
+  
+  return(p)
+}

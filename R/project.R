@@ -53,7 +53,7 @@ faceProject2d.pmesh3d <- function(f, base2d){
   
 projectionInfo <- function(p, nn, base2d){
 
-  A <- solve(rbind(t(base2d), nn))[,1:2]
+  A <- solve(rbind(t(base2d), nn))  
   k <- sum(p*nn)
   pinfo <- list(p=p, norm=nn, A=A, base2d=base2d, k=k)
   class(pinfo) <- 'projectionInfo'

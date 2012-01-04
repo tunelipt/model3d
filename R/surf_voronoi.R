@@ -30,7 +30,7 @@ surfaceVoronoi <- function(m, pts, basefun=getBase){
   pinfo <- faceProjectionInfo(m, base2d)
   
 
-  pts <- pointsProject(rbind(x,y,z), base)
+  pts <- pointsProject(rbind(x,y,z), base2d)
   npts <- length(x)
   m2d <- project3dTo2d(m, base2d)
 
@@ -55,7 +55,7 @@ surfaceVoronoi <- function(m, pts, basefun=getBase){
       if (length(pi) == 0)
         next
       count <- count+1
-      pi3d <- project2To3d(pi[[1]], pinfo[[k]])
+      pi3d <- project2dTo3d(pi[[1]], pinfo[[k]])
       tmp[[count]] <- pi3d
     }
     class(tmp) <- 'pmesh3d'
@@ -65,6 +65,7 @@ surfaceVoronoi <- function(m, pts, basefun=getBase){
   return(plst)
 }
 
+ 
 
     
     

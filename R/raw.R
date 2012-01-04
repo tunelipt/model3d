@@ -47,7 +47,7 @@ raw2vtk <- function(tri, fname){
     cat(3, count:(count+2), "\n", file=con)
     count <- count + 3
   }
-  
+   
   cat("\nCELL_TYPES", n, "\n", file=con)
   for (i in 1:n)
     cat(5, "\n", file=con)
@@ -55,3 +55,6 @@ raw2vtk <- function(tri, fname){
   
   
 }
+
+
+
