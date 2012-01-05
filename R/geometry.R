@@ -9,6 +9,7 @@
 #' @param v Second vector
 #' @return u X v
 #' @seealso \code{\link{dotProduct}}
+#' @export
 #' @examples
 #' ex <- c(1, 0, 0)
 #' ey <- c(0, 1, 0)
@@ -31,6 +32,7 @@ crossProduct <- function(u,v){
 #' @param v Second vector
 #' @return \eqn{\sum_{i=1}^{n} u_i v_i}
 #' @seealso \code{\link{crossProduct}}, \code{\link{vnorm}}
+#' @export
 #' @examples
 #' print(dotProduct(c(1,0,0), c(0,1,0)))
 dotProduct <- function(u,v)
@@ -42,6 +44,7 @@ dotProduct <- function(u,v)
 #'
 #' @param u Vector
 #' @return \eqn{\sqrt{\sum_{i=1}^{n} u_i v_i}}
+#' @export
 vnorm <- function(u)
   return(sqrt(dotProduct(u,u)))
 
@@ -53,6 +56,7 @@ vnorm <- function(u)
 #' @param invert A boolean that specifies whether the outer normal is wanted.
 #' @return A vector containing the 3 components of the normal.
 #' @seealso \code{\link{crossProduct}}
+#' @export
 #' @examples
 #' tri <- matrix(c(0,0,0, 1,0,0, 1,1,0), 3, 3)
 #' print(triNormal(tri))
@@ -73,6 +77,7 @@ triNormal <- function(x, invert=FALSE){
 #' @param eps Relative error acceptable when determining if 3 vertices are colinear
 #' @return A vector containing the normal to the polygon when the vertices are assumed to be numbered in counterclockwise manner.
 #' @seealso \code{\link{crossProduct}}, \code{\link{triNormal}}
+#' @export
 #' @examples
 #' poly <- matrix(c(0,0,0, 1,0,0, 1,1,0, 0,1,0), 3, 4)
 #' print(poly3dNorm(poly))
@@ -103,6 +108,7 @@ poly3dNorm <- function(p, eps=1e-8){
 #' @param n Normal to the polygon (if it has been previously computed).
 #' @return Area of the polygon.
 #' @seealso \code{\link{crossProduct}}, \code{\link{poly3dNormal}}
+#' @export
 #' @examples
 #' poly <- matrix(c(0,0,0, 1,0,0, 1,1,0, 0,1,0), 3, 4)
 #' print(poly3dArea(poly))
@@ -121,43 +127,6 @@ poly3dArea <- function(p, n=NULL){
   A <- abs(dotProduct(n, accu)) / 2
   return(A)
     
-}
-
-
-# Projects a point p on a plane given by a normal n and a point p0.
-projectPoint <- function(p, n, p0=NULL, eps=1e-6){
-
-  if (is.null(p0)) p0 <- double(3)
-  # Verify if p lies on the plane:
-  
-  ll <- p - p0
-  nl <- vnorm(ll)
-  lref <- max(nl, 1)
-
-  if (abs(dotProduct(ll, n)) < eps) return(p)
-  
-  
-  A <- matrix(c(1, 0, 0, n[1],
-                0, 1, 0, n[2],
-                0, 0, 1, n[3],
-                n[1], n[2], n[3], 0), 4, 4, byrow=TRUE)
-  b <- c(ll, 0)
-  x <- solve(A, b)
-
-  return(x[1:3]+p0)
-}
-
-
-
-generate2dCoords <- function(p){
-
-  x3 <- poly3dNorm(p)
-  x1 <- p[,2] - p[,1]
-  x1 <- x1 / vnorm(x1)
-
-  x2 <- crossProduct(x3, x1)
-
-  return(cbind(x1, x2, x3))
 }
 
 

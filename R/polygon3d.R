@@ -7,6 +7,7 @@
 #' @param z Vector with z coordinates of the vertices
 #' @return A matrix with class \code{polygon3d} where each column is a vertex of the polygon
 #' @seealso \code{\link{newPolygon}}, \code{\link{polygonArea}}, \code{\link{polygonCentroid}}
+#' @export
 #' @examples
 #' p <- newPolygon3d(c(0,1,2,1,2,0), c(0,0,1,2,3,3), c(0,0,0,0,0,0))
 #' print(p)
@@ -22,6 +23,7 @@ newPolygon3d <- function(x, y, z){
 #' A method that computes the area of simple convex 3D polygons of class polygon3d.
 #'
 #' @seealso \code{\link{polygonArea}}
+#' @export
 #' @examples
 #' p <- newPolygon3d(c(0,1,2,1,2,0), c(0,0,1,2,3,3), c(0,0,0,0,0,0))
 #' print(polygonArea(p))
@@ -44,10 +46,20 @@ polygonArea.polygon3d <- function(p){
 #' Returns the normal to a polygon.
 #'
 #' Assumes the polygon is convex.
+#' @export
 polygonNormal <- function(p) UseMethod("polygonNormal")
+
+#' Returns the normal to a polygon.
+#'
+#' For 2D polygons, just return z.
+#' @export
 polygonNormal.default <- function(p) c(0, 0, 1)
 
 
+#' Returns the normal to a polygon.
+#'
+#' Method for polygon3d objects. Assumes the polygon is convex.
+#' @export
 polygonNormal.polygon3d <- function(p){
   
   np <- dim(p)[2]

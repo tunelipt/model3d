@@ -17,6 +17,7 @@ rawGetTri <- function(stri){
 #'
 #' @param fname Name of the file to be read.
 #' @return A list of faces that contain a 3D triangular mesh (mesh3d format).
+#' @export
 rawRead <- function(fname){
 
   s <- readLines(fname)
@@ -42,6 +43,7 @@ rawRead <- function(fname){
 #'
 #' @param A list of mesh3d objects.
 #' @param fname Name of vtk file to save the data.
+#' @export
 raw2vtk <- function(tri, fname){
   tri <- mergeMeshList(tri)
 

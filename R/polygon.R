@@ -9,6 +9,7 @@ require(deldir)
 #' @param y Vector with y coordinates of the vertices
 #' @return A matrix with class \code{polygon} where each column is a vertex of the polygon
 #' @seealso \code{\link{newPolygon3d}}, \code{\link{polygonArea}}, \code{\link{polygonCentroid}}, \code{\link{polygonIntersect}}
+#' @export
 #' @examples
 #' p <- newPolygon(c(0,1,2,1,2,0), c(0,0,1,2,3,3))
 #' print(p)
@@ -25,6 +26,7 @@ newPolygon <- function(x, y){
 #' @param p A polygon.
 #' @return A gpclib polygon.
 #' @seealso \code{\link{newPolygon}}, \code{\link{gpc2poly}}
+#' @export
 #' @examples
 #' p <- newPolygon(c(0,1,2,1,2,0), c(0,0,1,2,3,3))
 #' g <- poly2gpc(p)
@@ -38,6 +40,7 @@ poly2gpc <- function(p) as(cbind(p[1,], p[2,]), 'gpc.poly')
 #' @param p A gpclib polygon
 #' @return A polygon of class polygon
 #' @seealso \code{\link{newPolygon}}, \code{\link{poly2gpc}}
+#' @export
 #' @examples
 #' p <- newPolygon(c(0,1,2,1,2,0), c(0,0,1,2,3,3))
 #' g <- poly2gpc(p)
@@ -51,14 +54,19 @@ gpc2poly <- function(gpc){p <- get.pts(gpc)[[1]]; return(newPolygon(p$x, p$y))}
 #'
 #' @param p Polygon
 #' @return Matrix with coordinates of the vertices
+#' @export
 getCoords <- function(p) UseMethod("getCoords")
 
+#' Method of getCoords for polygon.
+#' @export
 getCoords.polygon <- function(p){
   x <- t(p)
   class(x) <- 'matrix'
   return(x)
 }
 
+#' Method of getCoords for gpc.poly.
+#' @export
 getCoords.gpc.poly <- function(p){
   x <- get.pts(p)[[1]]
 
@@ -72,6 +80,7 @@ getCoords.gpc.poly <- function(p){
 #' @param p Matrix containing the vertices of the polygon.
 #' @return Area of the polygon.
 #' @seealso \code{\link{crossProduct}}, \code{\link{poly3dArea}}
+#' @export
 #' @examples
 #' poly <- newPolygon(c(0, 1, 1, 0), c(0, 0, 1, 1))
 #' print(polygonArea(poly))
@@ -82,6 +91,7 @@ polygonArea <- function(p) UseMethod("polygonArea")
 #' A method that computes the area of simple polygons of class polygon.
 #'
 #' @seealso \code{\link{polygonArea}}, \code{\link{polygonArea.gpc.poly}}
+#' @export
 #' @examples
 #' poly <- newPolygon(c(0, 1, 1, 0), c(0, 0, 1, 1))
 #' print(polygonArea(poly))
@@ -100,6 +110,7 @@ polygonArea.polygon <- function(p){
 #' A method that computes the area of polygons of class gpc.poly.
 #'
 #' @seealso \code{\link{polygonArea}}, \code{\link{polygonArea.polygon}}
+#' @export
 #' @examples
 #' p <- newPolygon(c(0,1,2,1,2,0), c(0,0,1,2,3,3))
 #' g <- poly2gpc(p)
@@ -115,6 +126,7 @@ polygonArea.gpc.poly <- function(p) area.poly(p)
 #'
 #' @param p Polygon
 #' @return Coordinates of the centroid
+#' @export
 polygonCentroid <- function(p) UseMethod("polygonCentroid")
 
 
@@ -124,6 +136,7 @@ polygonCentroid <- function(p) UseMethod("polygonCentroid")
 #'
 #' @param p Polygon
 #' @return Coordinates of the centroid
+#' @export
 polygonCentroid.polygon <- function(p){
   A <- polygonArea(p)
   x <- p[1,]
@@ -149,12 +162,13 @@ polygonCentroid.polygon <- function(p){
 #' @param p1 First polygon
 #' @param p2 Second polygon
 #' @return The intersection of the polygons.
+#' @export
 polygonIntersect <- function(p1, p2) UseMethod('polygonIntersect')
 
 #' Polygon Intersection.
 #'
 #' Method that computes  intersection of two gpc.poly polygons. Actually calls the approppriate function of gpclib to compute the intersection.
-#'
+#' @export
 polygonIntersect.gpc.poly <- function(p1, p2){
 
   return(intersect(p1, p2))
@@ -162,7 +176,7 @@ polygonIntersect.gpc.poly <- function(p1, p2){
 #' Polygon Intersection.
 #'
 #' Method that computes  intersection of two polygons of class polygon. It converts the polygons to gpc.poly polygons and then uses gpclib to compute the intersection. The result is then converted to a list of polygons of class polygon.
-#'
+#' @export
 polygonIntersect.polygon <- function(p1, p2){
 
   g1 <- poly2gpc(p1)
@@ -184,6 +198,7 @@ polygonIntersect.polygon <- function(p1, p2){
 #'
 #' @param p Polygon
 #' @return Coordinates of the centroid
+#' @export
 polygonCentroid.gpc.poly <- function(p){
   pts <- get.pts(p)
   np <- length(pts)
@@ -227,7 +242,7 @@ polygonCentroid.gpc.poly <- function(p){
 #' @param xb X limits of outer box of the tesselation
 #' @param yb Y limits of outer box of the tesselation
 #' @return A list of polygons corresponding to the voronoi regions of each node.
-#'
+#' @export
 #' @examples
 #' x <- runif(10)
 #' y <- runif(10)
