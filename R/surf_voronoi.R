@@ -1,3 +1,14 @@
+#' Projection information of a face.
+#'
+#' Given a plane of projection identified by its orthonormal basis,
+#' this function uses \code{\link{projectionInfo}} to calculate the projection
+#' information so that points lying on the projection can be projected back to
+#' 3D.
+#'
+#' @param face Polygonal mesh.
+#' @param Orthonormal basis of projection
+#' @param facor Whether the direction of normals should be inverted.
+#' @return List of projection info for each polygon in the mesh.
 faceProjectionInfo <- function(face, base2d, facor=1){
 
   nf <- meshSize(face)
@@ -14,7 +25,19 @@ faceProjectionInfo <- function(face, base2d, facor=1){
 }
 
   
-
+#' Computes the voronoi diagram of points in a curved surface.
+#'
+#' Computing voronoi diagrams for 2D points is simple if libraries are
+#' available. If the points are contrained in a curved 3D surface, things
+#' are a little more complicated. This function projects the surface on a plane
+#' computes the voronoi diagram in this plane and then projects the resulting
+#' polygons back to 3D.
+#'
+#' @param m Polygonal 3D mesh.
+#' @param pts Coordinates of the points that will be used to compute the Voronoi diagram
+#' @param basefun Function used to obtain the projection plane.
+#' @return A list containing 3D polygonal meshes of the influence area for each node.
+#' @export
 surfaceVoronoi <- function(m, pts, basefun=getBase){
 
   

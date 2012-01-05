@@ -1,3 +1,14 @@
+#' Function that stores point data in a vtk file.
+#'
+#' Create a vtk file (legacy format) from points. Values corresponding to
+#' the points can, optionally, be added as well.
+#'
+#' @param fname Name of vtk file
+#' @param x x coordinates of the points
+#' @param y y coordinates of the points
+#' @param z z coordinates of the points
+#' @param ... List of values associated with the points.
+#' @export
 points2vtk <- function(fname, x, y, z, ...){
 
 
@@ -39,6 +50,17 @@ points2vtk <- function(fname, x, y, z, ...){
   
 }
 
+#' Function that stores point data in a tecplot file.
+#'
+#' Create a vtk file (legacy format) from points. Values corresponding to
+#' the points can, optionally, be added as well.
+#'
+#' @param fname Name of vtk file
+#' @param x x coordinates of the points
+#' @param y y coordinates of the points
+#' @param z z coordinates of the points
+#' @param ... List of values associated with the points.
+#' @param zname Zone name
 points2tec <- function(fname, x, y=NULL, z=NULL, ..., zname=NULL){
 
   
@@ -85,6 +107,17 @@ points2tec <- function(fname, x, y=NULL, z=NULL, ..., zname=NULL){
 
 
 }
+
+
+#' Function that stores polygons in a vtk file.
+#'
+#' Create a vtk file (legacy format) from polygons. Values corresponding to
+#' the points can, optionally, be added as well.
+#'
+#' @param fname Name of vtk file
+#' @param mesh Polygonal mesh
+#' @param ... List of values associated with the points.
+#' @export
 polygons2vtk <- function(fname, mesh, ...){
   
 
@@ -141,6 +174,12 @@ polygons2vtk <- function(fname, mesh, ...){
 }
     
   
+#' Function that creates  a vtk color space file.
+#'
+#'
+#' @param fname Name of vtk file
+#' @param ... List of color values
+#' @export
 cmap2vtk <- function(fname, ...){
   cmlst <- list(...)
   nm <- length(cmlst)
