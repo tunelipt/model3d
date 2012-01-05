@@ -1,3 +1,4 @@
+#' Reads a single triangle from a raw file.
 rawGetTri <- function(stri){
   nl <- length(stri)
   
@@ -10,7 +11,12 @@ rawGetTri <- function(stri){
 
 }  
 
-
+#' Reads a raw file.
+#'
+#' Raw files are a very simple file format to store 3D surface geometries. The surface geometries are decomposed into different surfaces called objects that store the surface as a triangulation of the surface.
+#'
+#' @param fname Name of the file to be read.
+#' @return A list of faces that contain a 3D triangular mesh (mesh3d format).
 rawRead <- function(fname){
 
   s <- readLines(fname)
@@ -30,8 +36,14 @@ rawRead <- function(fname){
 }
   
 
+#' Converts a raw mesh to vtk file format.
+#'
+#' The raw mesh is actually a list of mesh3d that was read with rawRead. This function saves this list as vtk file (legacy format).
+#'
+#' @param A list of mesh3d objects.
+#' @param fname Name of vtk file to save the data.
 raw2vtk <- function(tri, fname){
-  tri <- joinTri(tri)
+  tri <- mergeMeshList(tri)
 
   d <- dim(tri)
   n <- d[3]

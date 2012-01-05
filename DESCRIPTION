@@ -4,6 +4,21 @@ Date: 2012-01-04
 Title: Funções para manipulação de modelos 3D.
 Author: Paulo Jabardo <pjabardo@ipt.br>
 Maintainer: Paulo Jabardo <pjabardo@ipt.br>
-Depends: R (>= 2.10), gpclib, deldir
-Description: Maniupulação de polígonos e malhas de polígonos 2D e 3D, determinação de regiões de influência em superfícies curvas e partição de modelos em faixas em uma direção.
+Depends:
+    R (>= 2.10),
+    gpclib,
+    deldir
+Description: Maniupulação de polígonos e malhas de polígonos 2D e 3D,
+    determinação de regiões de influência em superfícies curvas e partição de
+    modelos em faixas em uma direção.
 License: GPL (>= 3)
+Collate:
+    'geometry.R'
+    'mesh.R'
+    'polygon.R'
+    'polygon3d.R'
+    'project.R'
+    'raw.R'
+    'split-height.R'
+    'surf_voronoi.R'
+    'vtk.R'

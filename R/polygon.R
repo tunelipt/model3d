@@ -1,19 +1,56 @@
 require(gpclib)
 require(deldir)
 
-
+#' Create a new simple 2D polygon.
+#'
+#' Creates a new simple 2D polygon from the coordinates. The polygon is stored as a matrix where the first row are the x coordinates of the vertices and the second row are the y coordinates.
+#'
+#' @param x Vector with x coordinates of the vertices
+#' @param y Vector with y coordinates of the vertices
+#' @return A matrix with class \code{polygon} where each column is a vertex of the polygon
+#' @seealso \code{\link{newPolygon3d}}, \code{\link{polygonArea}}, \code{\link{polygonCentroid}}, \code{\link{polygonIntersect}}
+#' @examples
+#' p <- newPolygon(c(0,1,2,1,2,0), c(0,0,1,2,3,3))
+#' print(p)
 newPolygon <- function(x, y){
   p <- rbind(x=x, y=y)
   class(p) <- 'polygon'
   return(p)
 }
 
-
+#' Converts a polygon to a gpclib polygon.
+#'
+#' The R package gpclib provides a few algorithms that are useful but it has an internal (very general) representation of polygons. This function converts a simple polygon of class polygon to a gpclib polygon.
+#'
+#' @param p A polygon.
+#' @return A gpclib polygon.
+#' @seealso \code{\link{newPolygon}}, \code{\link{gpc2poly}}
+#' @examples
+#' p <- newPolygon(c(0,1,2,1,2,0), c(0,0,1,2,3,3))
+#' g <- poly2gpc(p)
+#' plot(g)
 poly2gpc <- function(p) as(cbind(p[1,], p[2,]), 'gpc.poly')
 
+#' Converts a gpclib polygon to a simple polygon.
+#'
+#' This function Assumes that the polygon is simple and has no holes.
+#'
+#' @param p A gpclib polygon
+#' @return A polygon of class polygon
+#' @seealso \code{\link{newPolygon}}, \code{\link{poly2gpc}}
+#' @examples
+#' p <- newPolygon(c(0,1,2,1,2,0), c(0,0,1,2,3,3))
+#' g <- poly2gpc(p)
+#' print(gpc2poly(g))
 gpc2poly <- function(gpc){p <- get.pts(gpc)[[1]]; return(newPolygon(p$x, p$y))}
 
 
+#' Returns the coordinates of a simple polygon.
+#'
+#' Returns a matrix where each row is a vertex of the polygon. Only works with simples polygons. It is actually a generic S3 function.
+#'
+#' @param p Polygon
+#' @return Matrix with coordinates of the vertices
 getCoords <- function(p) UseMethod("getCoords")
 
 getCoords.polygon <- function(p){
@@ -28,8 +65,26 @@ getCoords.gpc.poly <- function(p){
   return(cbind(x=x$x, x=x$y))
 }
          
+#' Calculates the area of a polygon.
+#'
+#' A generic S3 function that computes the area of polygons given the coordinates of its vertices arranged as a matrix where each column is a vertex numbered in counterclockwise manner.
+#'
+#' @param p Matrix containing the vertices of the polygon.
+#' @return Area of the polygon.
+#' @seealso \code{\link{crossProduct}}, \code{\link{poly3dArea}}
+#' @examples
+#' poly <- newPolygon(c(0, 1, 1, 0), c(0, 0, 1, 1))
+#' print(polygonArea(poly))
 polygonArea <- function(p) UseMethod("polygonArea")
 
+#' Calculates the area of a polygon.
+#'
+#' A method that computes the area of simple polygons of class polygon.
+#'
+#' @seealso \code{\link{polygonArea}}, \code{\link{polygonArea.gpc.poly}}
+#' @examples
+#' poly <- newPolygon(c(0, 1, 1, 0), c(0, 0, 1, 1))
+#' print(polygonArea(poly))
 polygonArea.polygon <- function(p){
   n <- dim(p)[2]
   x <- c(p[1,], p[1,1])
@@ -40,14 +95,35 @@ polygonArea.polygon <- function(p){
 }
 
 
+#' Calculates the area of a polygon.
+#'
+#' A method that computes the area of polygons of class gpc.poly.
+#'
+#' @seealso \code{\link{polygonArea}}, \code{\link{polygonArea.polygon}}
+#' @examples
+#' p <- newPolygon(c(0,1,2,1,2,0), c(0,0,1,2,3,3))
+#' g <- poly2gpc(p)
+#' print(polygonArea(g)
 polygonArea.gpc.poly <- function(p) area.poly(p)
 
 
 
 
-
+#' Centroid of a polygon.
+#'
+#' Generic S3 function that computes the centroid of a polygon.
+#'
+#' @param p Polygon
+#' @return Coordinates of the centroid
 polygonCentroid <- function(p) UseMethod("polygonCentroid")
 
+
+#' Centroid of a polygon.
+#'
+#' Method that computes centroid of a polygons of class polygon.
+#'
+#' @param p Polygon
+#' @return Coordinates of the centroid
 polygonCentroid.polygon <- function(p){
   A <- polygonArea(p)
   x <- p[1,]
@@ -66,18 +142,27 @@ polygonCentroid.polygon <- function(p){
   
 
 
-splitWith <- function(vor, hull){
-
-  return(lapply(vor, function(v) intersect(v, hull)))
-}
-
-
+#' Polygon Intersection.
+#'
+#' S3 generic function that compute the intersection of two polygons. Remember that the intersection of two polygons can be 0, 1 or more polygons.
+#'
+#' @param p1 First polygon
+#' @param p2 Second polygon
+#' @return The intersection of the polygons.
 polygonIntersect <- function(p1, p2) UseMethod('polygonIntersect')
 
+#' Polygon Intersection.
+#'
+#' Method that computes  intersection of two gpc.poly polygons. Actually calls the approppriate function of gpclib to compute the intersection.
+#'
 polygonIntersect.gpc.poly <- function(p1, p2){
 
   return(intersect(p1, p2))
 }
+#' Polygon Intersection.
+#'
+#' Method that computes  intersection of two polygons of class polygon. It converts the polygons to gpc.poly polygons and then uses gpclib to compute the intersection. The result is then converted to a list of polygons of class polygon.
+#'
 polygonIntersect.polygon <- function(p1, p2){
 
   g1 <- poly2gpc(p1)
@@ -93,6 +178,12 @@ polygonIntersect.polygon <- function(p1, p2){
 
   
 
+#' Centroid of a polygon.
+#'
+#' Method that computes centroid of a polygons of class goc.poly.
+#'
+#' @param p Polygon
+#' @return Coordinates of the centroid
 polygonCentroid.gpc.poly <- function(p){
   pts <- get.pts(p)
   np <- length(pts)
@@ -127,7 +218,22 @@ polygonCentroid.gpc.poly <- function(p){
   
 
 
-
+#' Computes the voronoi tesselation of a set of 2D points.
+#'
+#' Uses the package \code{\link{deldir}} to compute the voronoi tesselation of a set of points.
+#'
+#' @param x X coordinates of the points
+#' @param y Y coordinates of the points
+#' @param xb X limits of outer box of the tesselation
+#' @param yb Y limits of outer box of the tesselation
+#' @return A list of polygons corresponding to the voronoi regions of each node.
+#'
+#' @examples
+#' x <- runif(10)
+#' y <- runif(10)
+#' vor <- voronoi2d(x, y, c(0, 1), c(0, 1))
+#' plot(x, y, ty='p', xlim=c(-.1, 1.1), ylim=c(-.1, 1.1))
+#' for (p in vor) polygon(v[1,], v[2,])
 voronoi2d <- function(x, y, xb=NULL, yb=NULL){
   if (length(x)==1){
     if (is.null(xb)) xb <- c(x-10, x+10)
@@ -136,7 +242,7 @@ voronoi2d <- function(x, y, xb=NULL, yb=NULL){
     xx <- c(xb[1], xb[2], xb[2], xb[1])
     yy <- c(yb[1], yb[1], yb[2], yb[2])
 
-    return(list(as(cbind(xx, yy), 'gpc.poly')))
+    return(list(newPolygon(xx, yy)))
   }
 
   if (is.null(xb)){

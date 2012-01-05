@@ -1,35 +1,62 @@
+#' Decomposes a polygon in triangles.
+#'
+#' Given a a simple convex polygon, this function decomposes it into triangles. The result is a mesh object (mesh3d for 3d polygons) that is a 3D array where the first index is the coordinate (x, y or z), the second the vertex (1, 2, 3) and the third the triangle number.
+#' 
+#' @param p Polygon
+#' @return Array containing the triangles.
+#'
+#' @examples
+#' p <- newPolygon(c(0, 1, 2, 1, 0), c(0, 0, 1, 2, 2))
+#' tri <- polygon2tri(p)
+#' plot(tri[1,,], tri[2,,])
+#' for (i in 1:dim(tri)[3]) polygon(tri[1,,i], tri[2,,i])
+polygon2tri <- function(p) UseMethod("polygon2tri")
 
-polygon2tri <- function(p){
+polygon2tri.polygon <- function(p){
 
   d <- dim(p)
 
   np <- d[2]
-  nd <- d[1]
 
   ntri <- np-2
   
-  if (np==3){
-    tri <- array(p, c(nd, 3, 1), list(c('x', 'y', 'z'), c('V1', 'V2', 'V3'), NULL))
-    class(tri) <- 'mesh'
-    return(tri)
-  }
-  xyz <- c('x', 'y', 'z')
-  tri <- array(p, c(nd, 3, ntri), list(xyz[1:nd], c('V1', 'V2', 'V3'), NULL))
+  xy <- c('x', 'y')
+  tri <- array(p, c(2, 3, ntri), list(xy, c('V1', 'V2', 'V3'), NULL))
 
   for (i in 1:ntri)
     tri[,,i] <- p[,c(1, i+1, i+2)]
 
-  if (nd==2)
-    class(tri) <- 'mesh'
-  else
-    class(tri) <- 'mesh3d'
+  class(tri) <- 'mesh'
   
   return(tri)
   
     
   }
 
+
+polygon2tri.polygon3d <- function(p){
+
+  d <- dim(p)
+
+  np <- d[2]
+
+  ntri <- np-2
   
+  xyz <- c('x', 'y', 'z')
+  tri <- array(p, c(3, 3, ntri), list(xyz, c('V1', 'V2', 'V3'), NULL))
+  
+  for (i in 1:ntri)
+    tri[,,i] <- p[,c(1, i+1, i+2)]
+  
+  class(tri) <- 'mesh3d'
+  
+  return(tri)
+}
+
+
+#' Creates a mesh from a list of polygons.
+#'
+#' This function basically gives the list the approppriate class name (pmesh or pmesh3d) depending on the class of the first element of the list.
 pmesh <- function(plst){
 
   if ('polygon3d' %in% class(plst[[1]]))
@@ -41,6 +68,8 @@ pmesh <- function(plst){
 }
 
 
+#' Compute the area of a mesh.
+#' A generic function that computes the area of a mesh.
 meshArea <- function(m) UseMethod("meshArea")
 
 meshArea.mesh <- function(m) apply(m, 3, polygonArea.polygon)
@@ -49,6 +78,9 @@ meshArea.pmesh <- function(m) sapply(m, function(p) polygonArea.polygon(p))
 meshArea.pmesh3d <- function(m) sapply(m, function(p) polygonArea.polygon3d(p))
 
 
+#' Compute the normal of each polygon in a mesh.
+#'
+#' Compute the normal of each polygon in a mesh. The normals are returned as a mtrix where each column correspondes to a polygon.
 meshNormal <- function(m) UseMethod('meshNormal')
 
 meshNormal.mesh <- function(m) rbind(x=rep(0, dim(m)[3]), y=rep(0, dim(m)[3]), z=rep(1, dim(m)[3]))
@@ -59,6 +91,9 @@ meshNormal.mesh3d <- function(m) apply(m, 3, polygonNormal.polygon3d)
 meshNormal.pmesh3d <- function(m) sapply(m, polygonNormal.polygon3d)
 
 
+#' Merges a list of triangular meshes.
+#'
+#' This function merges a list of triangular meshes into a single mesh.
 mergeMeshList <- function(trilst){
 
   if (!is.list(trilst)) trilst <- list(trilst)
@@ -79,6 +114,9 @@ mergeMeshList <- function(trilst){
   return(x)
 }  
 
+#' Converts a pmesh to mesh.
+#'
+#' Given a list of polygons, this function converts the polygons to triangles and merges them together to form a single triangular mesh.
 pmesh2mesh <- function(pm){
 
   tri <- lapply(pm, polygon2tri)
@@ -86,6 +124,7 @@ pmesh2mesh <- function(pm){
   return(mergeMeshList(tri))
 }
 
+#' Converts a mesh into a pmesh and mesh3d into pmesh3d.
 mesh2pmesh <- function(m){
 
   d <- dim(m)
@@ -106,7 +145,9 @@ mesh2pmesh <- function(m){
 }
                                    
   
-    
+#' Mean normal on a surface.
+#'
+#' Calculates the mean normal of a set of polygons, the mean is weighed by the area of the polygons.
 meshMeanNormal <- function(m){
   nn <- meshNormal(m)
   aa <- meshArea(m)
@@ -118,7 +159,8 @@ meshMeanNormal <- function(m){
 
 
 
-                
+
+#' Number of polygons in a mesh.
 meshSize <- function(m) UseMethod("meshSize")
 
 meshSize.mesh <- function(m) dim(m)[3]
@@ -127,6 +169,7 @@ meshSize.mesh3d <- function(m) dim(m)[3]
 meshSize.pmesh3d <- function(m) length(m)
 
 
+#' Return the ith polygon of a mesh.
 meshGet <- function(m,i) UseMethod("meshGet")
 meshGet.mesh <- function(m,i){p <- m[,,i]; class(p) <- 'polygon'; return(p)}
 meshGet.pmesh <- function(m,i) m[[i]]
@@ -135,7 +178,7 @@ meshGet.pmesh3d <- function(m,i) m[[i]]
 
 
 
-
+#' Concatenates a list of lists into a large list.
 joinPolygons <- function(plst){
 
   p <- list()
