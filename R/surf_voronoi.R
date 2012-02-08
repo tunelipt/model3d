@@ -34,11 +34,14 @@ faceProjectionInfo <- function(face, base2d, facor=1){
 #' polygons back to 3D.
 #'
 #' @param m Polygonal 3D mesh.
-#' @param pts Coordinates of the points that will be used to compute the Voronoi diagram
+#' @param x X Coordinate of the points that will be used to compute the Voronoi diagram
+#' @param y Y Coordinate of the points that will be used to compute the Voronoi diagram
+#' @param z Z Coordinate of the points that will be used to compute the Voronoi diagram
+#' @param pnames Names of each point.
 #' @param basefun Function used to obtain the projection plane.
 #' @return A list containing 3D polygonal meshes of the influence area for each node.
 #' @export
-surfaceVoronoi <- function(m, pts, basefun=getBase){
+surfaceVoronoi <- function(m,  pts, basefun=getBase){
 
   
   x <- pts$x
@@ -57,7 +60,7 @@ surfaceVoronoi <- function(m, pts, basefun=getBase){
   npts <- length(x)
   m2d <- project3dTo2d(m, base2d)
 
-  rx <- range(m2d[1,,])
+   rx <- range(m2d[1,,])
   ry <- range(m2d[2,,])
   dx <- rx[2]-rx[1]
   dy <- ry[2]-ry[1]

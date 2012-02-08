@@ -171,7 +171,7 @@ polygonIntersect <- function(p1, p2) UseMethod('polygonIntersect')
 #' @export
 polygonIntersect.gpc.poly <- function(p1, p2){
 
-  return(intersect(p1, p2))
+  return(gpclib::intersect(p1, p2))
 }
 #' Polygon Intersection.
 #'
@@ -182,7 +182,7 @@ polygonIntersect.polygon <- function(p1, p2){
   g1 <- poly2gpc(p1)
   g2 <- poly2gpc(p2)
 
-  g <- intersect(g1, g2)
+  g <- gpclib::intersect(g1, g2)
 
   p <- lapply(get.pts(g), function(x) newPolygon(x$x, x$y))
   return(p)
