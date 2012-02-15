@@ -285,3 +285,105 @@ voronoi2d <- function(x, y, xb=NULL, yb=NULL){
 
   
 
+#' Is the point inside the the polygon?
+#'
+#' Determines if a point is inside a simple polygon.
+#'
+#' @param vx x coordinates of the vertices of the polygon.
+#' @param vy y coordinates of the vertices of the polygon.
+#' @param x x coordinate of the point to be tested.
+#' @param y y coordinate of the point to be tested.
+#' @return TRUE if the point is inside the polygon.
+#' @export
+#' @examples
+#' vx <- c(0, 2, 2, 0)
+#' vy <- c(0, 0, 2, 2)
+#' print(pnpoly(vx, vy, 1, 1))
+#' print(pnpoly(vx, vy, 3, 1))
+pnpoly <- function(vx, vy, x, y){
+  nv <- length(vx)
+  test <- FALSE
+
+  j <- nv
+  for (i in 1:nv){
+    if ( ((vy[i]>y) != (vy[j]>y)) &&
+         ( x <= (vx[j]-vx[i]) * (y - vy[i]) / (vy[j] - vy[i]) + vx[i]))
+      test <- !test
+    j <- i
+  }
+  return(test)
+  
+}
+
+#' Is the point in the boundary of a polygon?
+#'
+#' Determines if a point is on the boundary of a polygon.
+#'
+#' @param vx x coordinates of the vertices of the polygon.
+#' @param vy y coordinates of the vertices of the polygon.
+#' @param x x coordinate of the point to be tested.
+#' @param y y coordinate of the point to be tested.
+#' @param eps Admissible error.
+#' @return TRUE if the point is on the segments.
+#' @export
+#' @examples
+#' vx <- c(0, 2, 2, 0)
+#' vy <- c(0, 0, 2, 2)
+#' print(pnpolybnd(vx, vy, 1, 1))
+#' print(pnpolybnd(vx, vy, 2, 1))
+pnpolybnd <- function(vx, vy, x, y, eps0=1e-8){
+  vx <- c(vx, vx[1])
+  vy <- c(vy, vy[1])
+  
+  n <- length(vx)
+  nm1 <- n-1
+
+ 
+ for (i in 2:n){
+   im1 <- i-1
+   dx <- vx[i] - vx[im1]
+   dy <- vy[i] - vy[im1]
+   alfx=NA
+   alfy=NA
+   
+   if (abs(dy) > eps0)
+     alfy <- (y - vy[im1]) / (vy[i] - vy[im1])
+   if (abs(dx) > eps0)
+     alfx <- (x - vx[im1]) / (vx[i] - vx[im1])
+   
+   if (is.na(alfy)){
+     if(abs(y-vy[i])<eps0 && alfx >= 0 && alfx <= 1)
+       return(TRUE)
+   }else if (is.na(alfx)){
+     if (abs(x-vx[i])<eps0 && alfy >= 0 && alfy <= 1)
+       return(TRUE)
+   }else{
+     if (abs(alfx-alfy) < eps0) return(TRUE)
+   }
+ }
+
+ return(FALSE)
+}
+
+
+
+#' Is the point inside or on the boundary of a polygon?
+#'
+#' Determines if a point is inside or on the boundary of a simple polygon.
+#' This function simply calls \code{\link{pnpoly}} and \code{\link{pnpolybnd}}.
+#'
+#' @param vx x coordinates of the vertices of the polygon.
+#' @param vy y coordinates of the vertices of the polygon.
+#' @param x x coordinate of the point to be tested.
+#' @param y y coordinate of the point to be tested.
+#' @return TRUE if the point is inside the polygon.
+#' @export
+#' @examples
+#' vx <- c(0, 2, 2, 0)
+#' vy <- c(0, 0, 2, 2)
+#' print(pnpoly(vx, vy, 1, 1))
+#' print(pnpoly(vx, vy, 3, 1))
+ponpoly <- function(vx, vy, x, y, eps0=1e-8){
+
+  return(pnpoly(vx, vy, x, y) || pnpolybnd(vx, vy, x, y, eps0))
+}
