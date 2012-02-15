@@ -383,6 +383,7 @@ pnpolybnd <- function(vx, vy, x, y, eps0=1e-8){
 #' vy <- c(0, 0, 2, 2)
 #' print(pnpoly(vx, vy, 1, 1))
 #' print(pnpoly(vx, vy, 3, 1))
+#' print(pnpoly(vx, vy, 2, 1))
 ponpoly <- function(vx, vy, x, y, eps0=1e-8){
 
   return(pnpoly(vx, vy, x, y) || pnpolybnd(vx, vy, x, y, eps0))

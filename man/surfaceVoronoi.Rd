@@ -7,8 +7,16 @@
 \arguments{
   \item{m}{Polygonal 3D mesh.}
 
-  \item{pts}{Coordinates of the points that will be used to
+  \item{x}{X Coordinate of the points that will be used to
   compute the Voronoi diagram}
+
+  \item{y}{Y Coordinate of the points that will be used to
+  compute the Voronoi diagram}
+
+  \item{z}{Z Coordinate of the points that will be used to
+  compute the Voronoi diagram}
+
+  \item{pnames}{Names of each point.}
 
   \item{basefun}{Function used to obtain the projection
   plane.}
