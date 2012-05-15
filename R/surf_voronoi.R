@@ -58,6 +58,7 @@ surfaceVoronoi <- function(m,  pts, basefun=getBase){
 
   pts <- pointsProject(rbind(x,y,z), base2d)
   npts <- length(x)
+  if (npts < 1) return(NULL)
   m2d <- project3dTo2d(m, base2d)
 
    rx <- range(m2d[1,,])
@@ -72,6 +73,7 @@ surfaceVoronoi <- function(m,  pts, basefun=getBase){
   np <- meshSize(m)
 
   plst <- list()
+  
   for (i in 1:nvor){
     count <- 0
     tmp <- list()
