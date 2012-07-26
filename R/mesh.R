@@ -264,6 +264,7 @@ joinPolygons <- function(plst){
   p <- list()
   for (pp in plst)
     p <- c(p, pp)
+  class(p) <- class(plst[[1]])
   
   return(p)
 }

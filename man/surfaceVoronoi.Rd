@@ -2,7 +2,8 @@
 \alias{surfaceVoronoi}
 \title{Computes the voronoi diagram of points in a curved surface.}
 \usage{
-  surfaceVoronoi(m, pts, basefun = getBase)
+  surfaceVoronoi(m, pts, basefun = getBase,
+    ptsnames = NULL)
 }
 \arguments{
   \item{m}{Polygonal 3D mesh.}
@@ -20,6 +21,8 @@
 
   \item{basefun}{Function used to obtain the projection
   plane.}
+
+  \item{ptsnames}{Names of the points.}
 }
 \value{
   A list containing 3D polygonal meshes of the influence
