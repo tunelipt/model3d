@@ -71,4 +71,23 @@ polygonNormal.polygon3d <- function(p){
 }         
 
 
+polygonCentroid.polygon3d <- function(p){
 
+  nn <- polygonNormal(p)
+  ex <- p[,2] - p[,1]
+  ex <- ex / vnorm(ex)
+
+  ey <- crossProduct(nn, ex)
+
+  
+
+  p2 <- polygonProject(p, cbind(ex, ey))
+
+  cxy <- polygonCentroid(p2)
+
+  cxyz <- cxy[1] * ex + cxy[2]*ey
+
+  return(as.double(cxyz))
+}
+  
+  
