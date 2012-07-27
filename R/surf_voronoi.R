@@ -79,12 +79,21 @@ surfaceVoronoi <- function(m,  pts, basefun=getBase, ptsnames=NULL){
     count <- 0
     tmp <- list()
     for (k in 1:np){
-
-      pi <- polygonIntersect(vor[[i]], meshGet(m2d, k))
+      tri <- meshGet(m2d, k)
+      or1 <- polygonOrient.default(tri)
+      
+      pi <- polygonIntersect(vor[[i]], tri)
       if (length(pi) == 0)
         next
       count <- count+1
-      pi3d <- project2dTo3d(pi[[1]], pinfo[[k]])
+      pi <- pi[[1]]
+      or2 <- polygonOrient.default(pi)
+      
+      if (or1*or2 < 0){
+        npi <- dim(pi)[2]
+        pi <- pi[,npi:1]
+      }
+      pi3d <- project2dTo3d(pi, pinfo[[k]])
       tmp[[count]] <- pi3d
     }
     class(tmp) <- 'pmesh3d'
