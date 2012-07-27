@@ -397,7 +397,7 @@ polygonOrient <- function(p) UseMethod('polygonOrient')
 polygonOrient.default <- function(p){
   d <- dim(p)
   if (d[1]==3)
-    return polygonOrient.polygon3d(p)
+    return(polygonOrient.polygon3d(p))
 
   n <- d[2]
   x <- c(p[1,], p[1,1])
