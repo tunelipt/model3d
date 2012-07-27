@@ -17,6 +17,26 @@ newPolygon3d <- function(x, y, z){
   return(p)
 }
 
+#' Calculates the sum of the cross product of all points of a polygon.
+#'
+#' Helper function that calculates the sum of the cross products between
+#' sequential vector formed between the ith point and the first.
+#'
+#' @export
+polyCross <- function(p){
+  np <- dim(p)[2]
+
+  p1 <- p[,1]
+
+  area <- c(0,0,0)
+
+  for (i in 3:np)
+    area <- area + crossProduct(p[,i-1] - p1, p[,i]-p1)
+
+  return(as.double(area))
+}
+
+  
 
 #' Calculates the area of a polygon.
 #'
@@ -28,18 +48,11 @@ newPolygon3d <- function(x, y, z){
 #' p <- newPolygon3d(c(0,1,2,1,2,0), c(0,0,1,2,3,3), c(0,0,0,0,0,0))
 #' print(polygonArea(p))
 polygonArea.polygon3d <- function(p){
-  n <- polygonNormal.polygon3d(p)
+
+  area <- polyCross(p)
+
+  return(vnorm(area)/2)
   
-  np <- dim(p)[2]
-  p <- cbind(p, p[,1])
-
-  accu <- double(3)
-
-  for (i in 1:np)
-    accu <- accu + crossProduct(p[,i], p[,i+1])
-
-  A <- abs(dotProduct(n, accu)) / 2
-  return(A)
 }
 
 
@@ -51,9 +64,9 @@ polygonNormal <- function(p) UseMethod("polygonNormal")
 
 #' Returns the normal to a polygon.
 #'
-#' For 2D polygons, just return z.
+#' For 2D polygons, just return +1 or -1, depending on orientation.
 #' @export
-polygonNormal.default <- function(p) c(0, 0, 1)
+polygonNormal.polygon <- function(p) polygonOrient(p)*c(0,0,1)
 
 
 #' Returns the normal to a polygon.
@@ -62,32 +75,63 @@ polygonNormal.default <- function(p) c(0, 0, 1)
 #' @export
 polygonNormal.polygon3d <- function(p){
   
-  np <- dim(p)[2]
-  if (np<3) return(NULL)
 
-  cp <- crossProduct( p[,2]-p[,1], p[,3]-p[,1] )
-  return(as.double(cp / vnorm(cp)))
+  area <- polyCross(p)
+
+  return(as.double(area / vnorm(area)))
   
 }         
 
 
+#' Centroid of a 3D polygon.
+#'
+#' Method that computes centroid of a polygons of class polygon3d.
+#'
+#' @param p Polygon
+#' @return Coordinates of the centroid
+#' @export
 polygonCentroid.polygon3d <- function(p){
 
-  nn <- polygonNormal(p)
-  ex <- p[,2] - p[,1]
-  ex <- ex / vnorm(ex)
 
-  ey <- crossProduct(nn, ex)
+  np <- dim(p)[2]
 
-  
+  p1 <- p[,1]
 
-  p2 <- polygonProject(p, cbind(ex, ey))
+  area <- matrix(0, nr=3, nc=np-2)
+  r <- matrix(0, nr=3, nc=np-2)
 
-  cxy <- polygonCentroid(p2)
+  for (i in 3:np)
+    area[,i-2] <- 0.5 * crossProduct(p[,i-1] - p1, p[,i]-p1)
 
-  cxyz <- cxy[1] * ex + cxy[2]*ey
+  A <- rowSums(area)
+  AA <- vnorm(A)
+  nn <- A / AA
 
-  return(as.double(cxyz))
+
+  for (i in 3:np)
+    r[,i-2] <- (p[,1] + p[,i-1] + p[,i]) / 3 * sum(area[,i-2]*nn)
+
+  return( rowSums(r) / AA)
 }
+
   
   
+
+#' Method for 3D polygon orientation.
+#'
+#' The function returns the normal to the polygon
+#' according to right hand rule orientation.
+#' If the area is zero, return the null vector c(0,0,0).
+#' @export
+polygonOrient.polygon3d <- function(p){
+
+  area <- polyCross(p)
+  
+  v <- vnorm(area)
+
+  if (abs(v) > 0)
+    return(as.double(area/v))
+  return(c(0,0,0))
+}
+
+

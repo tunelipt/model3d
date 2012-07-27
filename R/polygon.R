@@ -218,18 +218,6 @@ polygonCentroid.gpc.poly <- function(p){
 }
   
   
-
-
-
-  
-  
-
-
-               
-     
-
-
-  
   
 
 
@@ -388,3 +376,42 @@ ponpoly <- function(vx, vy, x, y, eps0=1e-8){
 
   return(pnpoly(vx, vy, x, y) || pnpolybnd(vx, vy, x, y, eps0))
 }
+
+
+
+#' Return polygon orientation.
+#'
+#' For 2D polygons the function returns +1 for
+#' counterclockwise oriented polygons. For 3D polygons,
+#' the normal to the polygon using the right hand rule.
+#' @export
+polygonOrient <- function(p) UseMethod('polygonOrient')
+
+#' Default method for polygon orientation.
+#'
+#' The first row should be x coordinates.
+#' second row should be y coordinates. If a
+#' third row is present this function will use
+#' the 3D method.
+#' @export
+polygonOrient.default <- function(p){
+  d <- dim(p)
+  if (d[1]==3)
+    return polygonOrient.polygon3d(p)
+
+  n <- d[2]
+  x <- c(p[1,], p[1,1])
+  y <- c(p[2,], p[2,1])
+  area <- (x[1:n]*y[2:(n+1)] - x[2:(n+1)]*y[1:n])
+
+  return(sign(sum(area)))
+}
+
+
+#' Method for 2D polygon orientation.
+#'
+#' @export
+polygonOrient.polygon <- function(p)
+  polygonOrient.default(p)
+
+
