@@ -92,6 +92,7 @@ surfaceVoronoi <- function(m,  pts, basefun=getBase, ptsnames=NULL){
       if (or1*or2 < 0){
         npi <- dim(pi)[2]
         pi <- pi[,npi:1]
+        class(pi) <- 'polygon'
       }
       pi3d <- project2dTo3d(pi, pinfo[[k]])
       tmp[[count]] <- pi3d
