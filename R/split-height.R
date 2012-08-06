@@ -169,13 +169,11 @@ splitHeight <- function(face, h, mshh=NULL, dnum=3){
       }
     }
   }
-
   for (i in 1:nstrips)
     if (length(mshh[[i]]) > 0)
       for (k in 1:length(mshh[[i]]))
         class(mshh[[i]][[k]]) <- 'pmesh3d'
-      
-  
+
   return(mshh)
       
 }
