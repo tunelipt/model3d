@@ -37,7 +37,11 @@ points2vtk <- function(fname, x, y, z, ...){
     dnames <- names(dados)
     cat("\nCELL_DATA", length(dados[[1]]), file=con)
     for (dn in dnames){
-      cat("\nSCALARS", dn, "float 1\nLOOKUP_TABLE default\n", file=con)
+      if (is.integer(dados))
+        dntype='int'
+      else
+        dntype='float'
+      cat("\nSCALARS", dn, dntype, "1\nLOOKUP_TABLE default\n", file=con)
       
       cat(dados[[dn]], sep='\n', file=con)
     }
